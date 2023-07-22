@@ -1,0 +1,17 @@
+name_launch;type_launch;long_launch;lat_launch;name_target;type_target;long_target;lat_target
+Montana;western silo;-110;47;Moscow;eastern target;38;56
+Montana;western silo;-110;47;Saint Petersburg;eastern target;30;60
+Montana;western silo;-110;47;Novosibirsk;eastern target;83;55
+Montana;western silo;-110;47;Yekaterinburg;eastern target;61;57
+Montana;western silo;-110;47;Kazan;eastern target;49;56
+Montana;western silo;-110;47;Shanghai;eastern target;121;31
+Montana;western silo;-110;47;Zhumadian;eastern target;114;33
+Montana;western silo;-110;47;Beijing;eastern target;116;40
+Kostroma;eastern silo;47;66;New York;western target;-74;41
+Kostroma;eastern silo;47;66;Los Angeles;western target;-118;34
+Kostroma;eastern silo;47;66;Chicago;western target;-88;42
+Kostroma;eastern silo;47;66;Houston;western target;-95;30
+Kostroma;eastern silo;47;66;London;western target;0;52
+Kostroma;eastern silo;47;66;Paris;western target;2;49
+Kostroma;eastern silo;47;66;Madrid;western target;-4;40
+Kostroma;eastern silo;47;66;Sydney;western target;151;-34
