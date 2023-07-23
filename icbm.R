@@ -103,8 +103,11 @@ polar2z = function(r, phi, theta) {-r*cos(theta)*cos(phi)}
 
 # XYZ to Polar (a bit inefficient)
 xyz2r     = function(x, y, z) {(x*x+y*y+z*z)^0.5}
-xyz2phi   = function(x, y, z) {acos(-z/((x*x+y*y+z*z)^0.5*
-                               cos(asin(y/(x*x+y*y+z*z)^0.5))))*sign(x)}
+xyz2phi   = function(x, y, z) {
+    if ((x*x+y*y+z*z)^0.5 == 0) print("(x*x+y*y+z*z)^0.5 == 0")
+    if (cos(asin(y/(x*x+y*y+z*z)^0.5)) == 0) print("cos(asin(y/(x*x+y*y+z*z)^0.5)) == 0")
+    acos(-z/((x*x+y*y+z*z)^0.5 * cos(asin(y/(x*x+y*y+z*z)^0.5)))) * sign(x)
+    }
 xyz2theta = function(x, y, z) {asin(y/(x*x+y*y+z*z)^0.5)}
 
 
@@ -192,10 +195,10 @@ NCOLDIV2=DIMX/2
 NROWDIV2=DIMY/2
 TH=0.7  # border between Earth globe and image limits
 RADIUS=min(NCOLDIV2, NROWDIV2)*TH
-MAXH=3000  # max icbm altitude (km)
-LOCRADIUS=3  # locations circle mark
-GRAYGLOBE=0.15
-GRAYMAP=0.4
+MAXH=3000  # max ICBM altitude from longest distance ICBM (km)
+BOOMRADIUS=6  # boom circle mark
+GRAYGLOBE=0.3
+GRAYMAP=0.6
 GRAYICBM=1
 
 # Calculate focal length to fit Earth in the final image and FOV
@@ -246,7 +249,7 @@ for (i in 1:NTRAJ) {
         'y'=seq(from=icbm$yl[i], to=icbm$yt[i], length.out=Npoints),
         'z'=seq(from=icbm$zl[i], to=icbm$zt[i], length.out=Npoints))
     
-    # Conversion to Polar (to include height in r)
+    # Conversion to Polar -> add height to r
     traj[[i]]$r=Rearth+icbm$Hi[i]*sin(seq(from=0, to=pi, length.out=Npoints))
     traj[[i]]$phi=xyz2phi(traj[[i]]$x, traj[[i]]$y, traj[[i]]$z)
     traj[[i]]$theta=xyz2theta(traj[[i]]$x, traj[[i]]$y, traj[[i]]$z)
@@ -275,12 +278,16 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
     DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
     
-    trajplot=list()
+    trajplot=list()  # keep only points to be plotted in the frame
     for (i in 1:NTRAJ) {
-        lastframe=min(frame+1, nrow(traj[[i]]))
-        trajplot[[i]]=rotateY(traj[[i]][1:lastframe,], theta=-theta)
+        Npoints=nrow(traj[[i]])  # points in trajectory
+        lastpoint=min(frame+1, Npoints)  # lastpoint points to plot
+        trajplot[[i]]=rotateY(traj[[i]][1:lastpoint,], theta=-theta)
         trajplot[[i]]$z = trajplot[[i]]$z + dz  # Earth along Z axis
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
+        trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
+        trajplot[[i]]$boom=0
+        if (lastpoint==Npoints) trajplot[[i]]$boom[Npoints]=1  # nuke exploded
     }
     
     img=NewBitmap(DIMX, DIMY)
@@ -297,7 +304,12 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$factor=f/trajplottmp$z
         trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=GRAYICBM  # "draw" points
+        ifboom=trajplottmp[trajplottmp$boom==1]
+        if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
+            round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
+            inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
+        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # "draw" points
+            GRAYICBM*trajplottmp$grayscale
     }
     
     # 2. Draw solid globe
@@ -316,7 +328,12 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$factor=f/trajplottmp$z
         trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=GRAYICBM  # "draw" points
+        ifboom=trajplottmp[trajplottmp$boom==1]
+        if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
+            round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
+            inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
+        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # "draw" points
+            GRAYICBM*trajplottmp$grayscale
     }
     
     print(paste0(frame, "/", NFRAMES, ", theta=", round(theta*180/pi), "º, ",
