@@ -103,11 +103,8 @@ polar2z = function(r, phi, theta) {-r*cos(theta)*cos(phi)}
 
 # XYZ to Polar (a bit inefficient)
 xyz2r     = function(x, y, z) {(x*x+y*y+z*z)^0.5}
-xyz2phi   = function(x, y, z) {
-    if ((x*x+y*y+z*z)^0.5 == 0) print("(x*x+y*y+z*z)^0.5 == 0")
-    if (cos(asin(y/(x*x+y*y+z*z)^0.5)) == 0) print("cos(asin(y/(x*x+y*y+z*z)^0.5)) == 0")
-    acos(-z/((x*x+y*y+z*z)^0.5 * cos(asin(y/(x*x+y*y+z*z)^0.5)))) * sign(x)
-    }
+xyz2phi   = function(x, y, z) {acos(-z/((x*x+y*y+z*z)^0.5 *
+                               cos(asin(y/(x*x+y*y+z*z)^0.5)))) * sign(x)}
 xyz2theta = function(x, y, z) {asin(y/(x*x+y*y+z*z)^0.5)}
 
 
@@ -196,7 +193,7 @@ NROWDIV2=DIMY/2
 TH=0.7  # border between Earth globe and image limits
 RADIUS=min(NCOLDIV2, NROWDIV2)*TH
 MAXH=3000  # max ICBM altitude from longest distance ICBM (km)
-BOOMRADIUS=6  # boom circle mark
+BOOMRADIUS=4  # boom circle mark
 GRAYGLOBE=0.3
 GRAYMAP=0.6
 GRAYICBM=1
@@ -308,7 +305,7 @@ for (frame in 0:(NFRAMES-1)) {
         if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
             round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
             inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # "draw" points
+        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
     
@@ -320,7 +317,7 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
-    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # "draw" points
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
     # 4. Draw trajectories closer than Earth
     for (i in 1:NTRAJ) {
@@ -332,7 +329,7 @@ for (frame in 0:(NFRAMES-1)) {
         if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
             round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
             inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # "draw" points
+        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
     
