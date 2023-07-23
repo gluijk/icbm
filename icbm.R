@@ -269,6 +269,7 @@ for (i in 1:NTRAJ) {
 
 
 # 4/5: War breaks out...
+background=readPNG("background4.png")
 for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*2
     
@@ -294,7 +295,8 @@ for (frame in 0:(NFRAMES-1)) {
         if (lastpoint==Npoints) trajplot[[i]]$boom[Npoints]=1  # nuke exploded
     }
     
-    img=NewBitmap(DIMX, DIMY)
+    # img=NewBitmap(DIMX, DIMY)
+    img=background*(1-frame/(NFRAMES-1))
     
     # Hidden parts "algorithm":
     #  1. Draw trajectories more distant than Earth
