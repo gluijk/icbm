@@ -94,6 +94,17 @@ SaveBitmap = function(img, name, trunc=TRUE, gamma=1) {
     writePNG(t(img[,ncol(img):1] / max(max(img),1))^(1/gamma), name)
 }
 
+LoadBitmap = function(name, chan=2) {
+    # Lee bitmap en formato PNG
+    # Si no es monocromo se carga el canal chan (por defecto G)
+    library(png)
+    img=readPNG(name)
+    if (length(dim(img))>2) img=img[,,chan]
+    
+    return(t(img[nrow(img):1,]))
+}
+
+
 # COORDINATES CONVERSION
 
 # Polar to XYZ
@@ -214,7 +225,7 @@ DT=DT[, list(x, y, z)]  # clean dataframe with 3 columns (x,y,z)
 
 
 # READ ICBM DATA AND PRECALCULATION OF ALL TRAJECTORIES
-icbm=data.table(read.csv2("icbm2.csv"))
+icbm=data.table(read.csv2("icbm.csv"))
 
 icbm$rl=Rearth
 icbm$phil=icbm$long_launch*pi/180  # longitude (E/W) in rad
@@ -269,7 +280,7 @@ for (i in 1:NTRAJ) {
 
 
 # 4/5: War breaks out...
-background=readPNG("background4.png")
+background=LoadBitmap("background4.png")
 for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*2
     
