@@ -97,14 +97,16 @@ SaveBitmap = function(img, name, trunc=TRUE, gamma=1) {
 # COORDINATES CONVERSION
 
 # Polar to XYZ
-polar2x = function(r, phi, theta) {r*cos(theta)*sin(phi)}
-polar2y = function(r, phi, theta) {r*sin(theta)}
+polar2x = function(r, phi, theta) { r*cos(theta)*sin(phi)}
+polar2y = function(r, phi, theta) { r*sin(theta)}
 polar2z = function(r, phi, theta) {-r*cos(theta)*cos(phi)}
 
 # XYZ to Polar (a bit inefficient)
 xyz2r     = function(x, y, z) {(x*x+y*y+z*z)^0.5}
-xyz2phi   = function(x, y, z) {acos(-z/((x*x+y*y+z*z)^0.5 *
-                               cos(asin(y/(x*x+y*y+z*z)^0.5)))) * sign(x)}
+xyz2phi   = function(x, y, z) {
+    # if (x==0) {if (z>0) return (pi) else return (0)}
+    acos( -z/( (x*x+y*y+z*z)^0.5 * cos(asin(y/(x*x+y*y+z*z)^0.5)) ) ) * sign(x)
+    }
 xyz2theta = function(x, y, z) {asin(y/(x*x+y*y+z*z)^0.5)}
 
 
@@ -155,6 +157,9 @@ rotateZ = function(df, theta=0) {  # rotation around Z axis
 
 ################################################################################
 
+# Clear all warnings()
+assign("last.warning", NULL, envir = baseenv())
+
 
 # DRAW EARTH
 
@@ -169,6 +174,30 @@ thetamax=acos(Rearth/dz)
 distmax=(dz^2 - Rearth^2)^0.5  # max distance to visible points
 
 
+# ANIMATION PARAMETERS
+NFRAMES=360*2  # number of frames
+DIMX=1920  # Full HD animation: 1920 x 1080 pixels
+DIMY=1080
+NCOLDIV2=round(DIMX/2)
+NROWDIV2=round(DIMY/2)
+TH=0.7  # border between Earth globe and image limits
+RADIUS=min(NCOLDIV2, NROWDIV2)*TH
+MAXH=3000  # max ICBM altitude from longest distance ICBM (km)
+RADIUSNUKE=4  # boom circle mark
+GRAYGLOBE=0.3
+GRAYMAP=0.6
+GRAYICBM=1
+GRAYNUKE=0.8
+
+# Calculate focal length to fit Earth in the final image and FOV
+f=min(NCOLDIV2,NROWDIV2)*TH*
+    (dz-Rearth*cos(thetamax))/(Rearth*sin(thetamax))
+FOV=(pi-2*thetamax)*180/pi  # FOV in deg
+# https://www.scantips.com/lights/fieldofview.html
+# ISS FOV:  140º diagonal -> 7.87mm FF
+# Moon FOV: 1.9º diagonal -> 1300mm FF
+
+
 # READ WORLD COORDINATES
 DT=data.table(map_data("world"))  # long/lat pairs for all countries
 DT=DT[, .(num=.N), by=.(long, lat)]  # summarize to deduplicate points
@@ -181,35 +210,11 @@ DT$theta=DT$lat*pi/180
 DT$x=polar2x(Rearth, DT$phi, DT$theta)
 DT$y=polar2y(Rearth, DT$phi, DT$theta)
 DT$z=polar2z(Rearth, DT$phi, DT$theta)
-DT=DT[, list(x, y, z)]  # dataframe with 3 columns (x,y,z)
-
-
-# Animation parameters
-NFRAMES=360*2  # number of frames
-DIMX=1920  # Full HD animation: 1920 x 1080 pixels
-DIMY=1080
-NCOLDIV2=DIMX/2
-NROWDIV2=DIMY/2
-TH=0.7  # border between Earth globe and image limits
-RADIUS=min(NCOLDIV2, NROWDIV2)*TH
-MAXH=3000  # max ICBM altitude from longest distance ICBM (km)
-BOOMRADIUS=4  # boom circle mark
-GRAYGLOBE=0.3
-GRAYMAP=0.6
-GRAYICBM=1
-
-# Calculate focal length to fit Earth in the final image and FOV
-f=min(NCOLDIV2,NROWDIV2)*TH*
-    (dz-Rearth*cos(thetamax))/(Rearth*sin(thetamax))
-FOV=(pi-2*thetamax)*180/pi  # FOV in deg
-# https://www.scantips.com/lights/fieldofview.html
-# ISS FOV:  140º diagonal -> 7.87mm FF
-# Moon FOV: 1.9º diagonal -> 1300mm FF
+DT=DT[, list(x, y, z)]  # clean dataframe with 3 columns (x,y,z)
 
 
 # READ ICBM DATA AND PRECALCULATION OF ALL TRAJECTORIES
-
-icbm=data.table(read.csv2("icbm.csv"))
+icbm=data.table(read.csv2("icbm2.csv"))
 
 icbm$rl=Rearth
 icbm$phil=icbm$long_launch*pi/180  # longitude (E/W) in rad
@@ -263,13 +268,13 @@ for (i in 1:NTRAJ) {
 
 
 
-# 2/4: ROTATION AROUND EARTH AXIS
+# 4/5: War breaks out...
 for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*2
     
     # Rotation and re allocation
     DTplot=rotateY(DT, theta=-theta)
-    # DTplot=rotateZ(DTplot, theta=theta)
+    DTplot=rotateX(DTplot, theta=-pi/6)
     DTplot$z = DTplot$z + dz  # Earth along Z axis
     # Distance from each map point to observation point (0,0,0)
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
@@ -280,7 +285,9 @@ for (frame in 0:(NFRAMES-1)) {
         Npoints=nrow(traj[[i]])  # points in trajectory
         lastpoint=min(frame+1, Npoints)  # lastpoint points to plot
         trajplot[[i]]=rotateY(traj[[i]][1:lastpoint,], theta=-theta)
+        trajplot[[i]]=rotateX(trajplot[[i]], theta=-pi/6)
         trajplot[[i]]$z = trajplot[[i]]$z + dz  # Earth along Z axis
+        # Distance from each trajectory point to observation point (0,0,0)
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
         trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
         trajplot[[i]]$boom=0
@@ -303,8 +310,8 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
         ifboom=trajplottmp[trajplottmp$boom==1]
         if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
-            round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
-            inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
+            round(ifboom$xp), round(ifboom$yp), RADIUSNUKE,
+            inc=FALSE, fill=TRUE, val=GRAYNUKE)
         img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
@@ -327,8 +334,8 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
         ifboom=trajplottmp[trajplottmp$boom==1]
         if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
-            round(ifboom$xp), round(ifboom$yp), BOOMRADIUS,
-            inc=FALSE, fill=TRUE, val=GRAYICBM*0.8)
+            round(ifboom$xp), round(ifboom$yp), RADIUSNUKE,
+            inc=FALSE, fill=TRUE, val=GRAYNUKE)
         img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
