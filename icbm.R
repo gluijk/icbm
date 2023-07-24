@@ -331,7 +331,7 @@ for (frame in 0:(NFRAMES-1)) {
             GRAYICBM*trajplottmp$grayscale
     }
     
-    # 2. Draw solid globe
+    # 2. Draw Earth
     img=DrawCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
                    inc=FALSE, fill=TRUE, val=GRAYGLOBE)
 
