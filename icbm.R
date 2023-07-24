@@ -198,7 +198,7 @@ RADIUSNUKE=4  # boom circle mark
 GRAYGLOBE=0.3
 GRAYMAP=0.6
 GRAYICBM=1
-GRAYNUKE=0.8
+GRAYNUKE=1
 
 # Calculate focal length to fit Earth in the final image and FOV
 f=min(NCOLDIV2,NROWDIV2)*TH*
@@ -251,19 +251,20 @@ icbm$Ni=round(icbm$dalpha/maxarc*NFRAMES)
 icbm$Hi=icbm$dalpha/maxarc*MAXH  # same launch angle condition for all ICBM's
 
 # Create list of dataframes (each trajectory = 1 dataframe)
-NTRAJ=nrow(icbm)
-traj=list()
+NTRAJ=nrow(icbm)  # number of trajectories
+traj=list()  # list of trajectories
+Npoints=c()  # vector with total length of each trajectory
 for (i in 1:NTRAJ) {
-    Npoints=icbm$Ni[i]
+    Npoints[i]=icbm$Ni[i]
     
     # Missile trajectory linear interpolation in XYZ coordinates
     traj[[i]]=data.table(
-        'x'=seq(from=icbm$xl[i], to=icbm$xt[i], length.out=Npoints),
-        'y'=seq(from=icbm$yl[i], to=icbm$yt[i], length.out=Npoints),
-        'z'=seq(from=icbm$zl[i], to=icbm$zt[i], length.out=Npoints))
+        'x'=seq(from=icbm$xl[i], to=icbm$xt[i], length.out=Npoints[i]),
+        'y'=seq(from=icbm$yl[i], to=icbm$yt[i], length.out=Npoints[i]),
+        'z'=seq(from=icbm$zl[i], to=icbm$zt[i], length.out=Npoints[i]))
     
-    # Conversion to Polar -> add height to r
-    traj[[i]]$r=Rearth+icbm$Hi[i]*sin(seq(from=0, to=pi, length.out=Npoints))
+    # Conversion to Polar -> add altitude to r
+    traj[[i]]$r=Rearth+icbm$Hi[i]*sin(seq(from=0, to=pi, length.out=Npoints[i]))
     traj[[i]]$phi=xyz2phi(traj[[i]]$x, traj[[i]]$y, traj[[i]]$z)
     traj[[i]]$theta=xyz2theta(traj[[i]]$x, traj[[i]]$y, traj[[i]]$z)
     
@@ -294,8 +295,7 @@ for (frame in 0:(NFRAMES-1)) {
     
     trajplot=list()  # keep only points to be plotted in the frame
     for (i in 1:NTRAJ) {
-        Npoints=nrow(traj[[i]])  # points in trajectory
-        lastpoint=min(frame+1, Npoints)  # lastpoint points to plot
+        lastpoint=min(frame+1, Npoints[i])  # lastpoint points to plot
         trajplot[[i]]=rotateY(traj[[i]][1:lastpoint,], theta=-theta)
         trajplot[[i]]=rotateX(trajplot[[i]], theta=-pi/6)
         trajplot[[i]]$z = trajplot[[i]]$z + dz  # Earth along Z axis
@@ -303,7 +303,7 @@ for (frame in 0:(NFRAMES-1)) {
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
         trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
         trajplot[[i]]$boom=0
-        if (lastpoint==Npoints) trajplot[[i]]$boom[Npoints]=1  # nuke exploded
+        if (lastpoint==Npoints[i]) trajplot[[i]]$boom[Npoints[i]]=1  # nuke
     }
     
     # img=NewBitmap(DIMX, DIMY)
@@ -322,9 +322,11 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
         ifboom=trajplottmp[trajplottmp$boom==1]
-        if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
-            round(ifboom$xp), round(ifboom$yp), RADIUSNUKE,
-            inc=FALSE, fill=TRUE, val=GRAYNUKE)
+        if (nrow(ifboom)==1) {  # nuke has to be plotted, size?
+            if (frame+1>=Npoints[i] & frame+1<=Npoints[i]+2) scale=3 else scale=1
+            img=DrawCircle(img, round(ifboom$xp), round(ifboom$yp),
+                RADIUSNUKE*scale, inc=FALSE, fill=TRUE, val=GRAYNUKE)
+        }
         img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
@@ -346,9 +348,11 @@ for (frame in 0:(NFRAMES-1)) {
         trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
         trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
         ifboom=trajplottmp[trajplottmp$boom==1]
-        if (nrow(ifboom)==1) img=DrawCircle(img,  # draw exploded nukes
-            round(ifboom$xp), round(ifboom$yp), RADIUSNUKE,
-            inc=FALSE, fill=TRUE, val=GRAYNUKE)
+        if (nrow(ifboom)==1) {  # nuke has to be plotted, size?
+            if (frame+1>=Npoints[i] & frame+1<=Npoints[i]+2) scale=3 else scale=1
+            img=DrawCircle(img, round(ifboom$xp), round(ifboom$yp),
+                RADIUSNUKE*scale, inc=FALSE, fill=TRUE, val=GRAYNUKE)
+        }
         img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
             GRAYICBM*trajplottmp$grayscale
     }
@@ -408,9 +412,6 @@ for (frame in 0:(NFRAMES-1)) {
     
     SaveBitmap(img, paste0("img", ifelse(frame<10, "00", ifelse(frame<100, "0", "")), frame))
 }
-
-
-
 
 
 
