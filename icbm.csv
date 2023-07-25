@@ -1,79 +1,83 @@
 name_launch;type_launch;long_launch;lat_launch;name_target;type_target;long_target;lat_target
-Gladkaya;eastern silo;95;57;Chicago;western target;-87,7;41,9
-Gladkaya;eastern silo;95;57;Melbourne;western target;145;-37,8
-Gladkaya;eastern silo;95;57;Mexico DF;western target;-99,1;19,4
-Gladkaya;eastern silo;95;57;San Francisco;western target;-122,4;37,8
-Gladkaya;eastern silo;95;57;Houston;western target;-95,4;29,8
-Gladkaya;eastern silo;95;57;London;western target;-0,1;51,5
-Gladkaya;eastern silo;95;57;Taiwan;western target;120,7;23,9
-Gladkaya;eastern silo;95;57;San Francisco;western target;-122,4;37,8
-Kostroma;eastern silo;47;66;Chicago;western target;-87,7;41,9
-Kostroma;eastern silo;47;66;Houston;western target;-95,4;29,8
-Kostroma;eastern silo;47;66;London;western target;-0,1;51,5
-Kostroma;eastern silo;47;66;Los Angeles;western target;-118,1;34
-Kostroma;eastern silo;47;66;Madrid;western target;-3,7;40,4
-Kostroma;eastern silo;47;66;New York;western target;-74;40,8
-Kostroma;eastern silo;47;66;Munich;western target;11,6;48,1
-Kostroma;eastern silo;47;66;Montreal;western target;-73,7;45,5
-North Korea;eastern silo;128;41;Los Angeles;western target;-118,1;34
-North Korea;eastern silo;128;41;Tokyo;western target;139,9;35,6
-Ordos;eastern silo;110;40;Buenos Aires;western target;-58,5;-34,6
-Ordos;eastern silo;110;40;London;western target;-0,1;51,5
-Ordos;eastern silo;110;40;Sao Paulo;western target;-46,6;-23,5
-Ordos;eastern silo;110;40;Taiwan;western target;120,7;23,9
-Ordos;eastern silo;110;40;New York;western target;-74;40,8
-Ordos;eastern silo;110;40;Chicago;western target;-87,7;41,9
-Ordos;eastern silo;110;40;Paris;western target;2,3;48,7
-Svobodny;eastern silo;128;51;New York;western target;-74;40,8
-Svobodny;eastern silo;128;51;Paris;western target;2,3;48,7
-Svobodny;eastern silo;128;51;Sydney;western target;151,2;-33,9
-Svobodny;eastern silo;128;51;Tokyo;western target;139,9;35,6
-Svobodny;eastern silo;128;51;Chicago;western target;-87,7;41,9
-Svobodny;eastern silo;128;51;Taiwan;western target;120,7;23,9
-Svobodny;eastern silo;128;51;Phoenix;western target;-112,2;33,6
 Arctic Sea;eastern submarine;150;77;New York;western target;-74;40,8
 Arctic Sea;eastern submarine;150;77;Toronto;western target;-79,4;43,8
 Arctic Sea;eastern submarine;150;77;Vancouver;western target;-123,1;49,2
+Barents Sea;western submarine;40;74;Crimea;eastern target;34,2;45,4
+Barents Sea;western submarine;40;74;Novgorod;eastern target;31,3;58,5
+Barents Sea;western submarine;40;74;Samara;eastern target;50,2;53,2
+Gladkaya;eastern silo;92;56;Houston;western target;-95,4;29,8
+Gladkaya;eastern silo;92;56;London;western target;-0,1;51,5
+Gladkaya;eastern silo;92;56;Melbourne;western target;145;-37,8
+Gladkaya;eastern silo;92;56;Mexico DF;western target;-99,1;19,4
+Gladkaya;eastern silo;92;56;San Francisco;western target;-122,4;37,8
+Gladkaya;eastern silo;92;56;San Francisco;western target;-122,4;37,8
+Gladkaya;eastern silo;92;56;Taiwan;western target;120,7;23,9
+Gladkaya;eastern silo;92;56;Tel Aviv;western target;34,8;32,1
+Kings Bay;western silo;-82;31;Caracas;eastern target;-66,9;10,5
+Kings Bay;western silo;-82;31;Krasnoyarsk;eastern target;92,9;56
+Kings Bay;western silo;-82;31;La Habana;eastern target;-82,4;23,1
+Kings Bay;western silo;-82;31;Moscow;eastern target;37,6;55,8
+Kings Bay;western silo;-82;31;Pionyang;eastern target;125,7;39
+Kings Bay;western silo;-82;31;Saint Petersburg;eastern target;30,3;59,9
+Kings Bay;western silo;-82;31;Vladivostok;eastern target;131,9;43,1
+Kirtland;western silo;-107;35;Beijing;eastern target;116,4;39,9
+Kirtland;western silo;-107;35;Krasnoyarsk;eastern target;92,9;56
+Kirtland;western silo;-107;35;Moscow;eastern target;37,6;55,8
+Kirtland;western silo;-107;35;Novosibirsk;eastern target;83;55
+Kirtland;western silo;-107;35;Sebastopol;eastern target;33,6;44,6
+Kirtland;western silo;-107;35;Shanghai;eastern target;121,4;31,2
+Kirtland;western silo;-107;35;Xian;eastern target;108,9;34,3
+Kostroma;eastern silo;41;57;Houston;western target;-95,4;29,8
+Kostroma;eastern silo;41;57;London;western target;-0,1;51,5
+Kostroma;eastern silo;41;57;Los Angeles;western target;-118,1;34
+Kostroma;eastern silo;41;57;Madrid;western target;-3,7;40,4
+Kostroma;eastern silo;41;57;Montreal;western target;-73,7;45,5
+Kostroma;eastern silo;41;57;Munich;western target;11,6;48,1
+Kostroma;eastern silo;41;57;New Delhi;western target;77,2;28,6
+Kostroma;eastern silo;41;57;New York;western target;-74;40,8
+Marot;eastern silo;72;29;New Delhi;western target;77,2;28,6
+Montana;western silo;-110;47;Bagdad;eastern target;44,4;33,3
+Montana;western silo;-110;47;Beijing;eastern target;116,4;39,9
+Montana;western silo;-110;47;Ekaterinburg;eastern target;60,6;56,8
+Montana;western silo;-110;47;Kazan;eastern target;49,1;55,8
+Montana;western silo;-110;47;Minsk;eastern target;27,6;53,9
+Montana;western silo;-110;47;Moscow;eastern target;37,6;55,8
+Montana;western silo;-110;47;Saint Petersburg;eastern target;30,3;59,9
+Montana;western silo;-110;47;Shanghai;eastern target;121,4;31,2
+Montana;western silo;-110;47;Zhumadian;eastern target;114;33
+Nellis;western silo;-115;36;Beijing;eastern target;116,4;39,9
+Nellis;western silo;-115;36;Chengdu;eastern target;104,1;30,7
+Nellis;western silo;-115;36;Minsk;eastern target;27,6;53,9
+Nellis;western silo;-115;36;Sebastopol;eastern target;33,6;44,6
+Nellis;western silo;-115;36;Shanghai;eastern target;121,4;31,2
+Nohar;western silo;75;29;Islamabad;eastern target;73,1;33,6
+North Korea;eastern silo;128;41;Los Angeles;western target;-118,1;34
+North Korea;eastern silo;128;41;Tokyo;western target;139,9;35,6
 Norway Sea;eastern submarine;4;66;Amsterdam;western target;4,9;52,4
 Norway Sea;eastern submarine;4;66;Berlin;western target;13,4;52,5
 Norway Sea;eastern submarine;4;66;Rome;western target;12,5;41,9
 Norway Sea;eastern submarine;4;66;Stockholm;western target;18,1;59,3
-Nellis;western silo;-115;36;Caracas;eastern target;-66,9;10,5
-Nellis;western silo;-115;36;La Habana;eastern target;-82,4;23,1
-Nellis;western silo;-115;36;Shanghai;eastern target;121,4;31,2
-Nellis;western silo;-115;36;Sebastopol;eastern target;33,6;44,6
-Nellis;western silo;-115;36;Beijing;eastern target;116,4;39,9
-Kings Bay;western silo;-82;31;Caracas;eastern target;-66,9;10,5
-Kings Bay;western silo;-82;31;Krasnoyarsk;eastern target;92,9;56
-Kings Bay;western silo;-82;31;La Habana;eastern target;-82,4;23,1
-Kings Bay;western silo;-82;31;Pionyang;eastern target;125,7;39
-Kings Bay;western silo;-82;31;Vladivostok;eastern target;11,9;43,1
-Kings Bay;western silo;-82;31;Saint Petersburg;eastern target;30,3;59,9
-Kings Bay;western silo;-82;31;Moscow;eastern target;37,6;55,8
-Kirtland;western silo;-107;35;Beijing;eastern target;116,4;39,9
-Kirtland;western silo;-107;35;Krasnoyarsk;eastern target;92,9;56
-Kirtland;western silo;-107;35;Novosibirsk;eastern target;83;55
-Kirtland;western silo;-107;35;Moscow;eastern target;37,6;55,8
-Kirtland;western silo;-107;35;Shanghai;eastern target;121,4;31,2
-Kirtland;western silo;-107;35;Xian;eastern target;108,9;34,3
-Kirtland;western silo;-107;35;Sebastopol;eastern target;33,6;44,6
-Montana;western silo;-110;47;Beijing;eastern target;116,4;39,9
-Montana;western silo;-110;47;Ekaterinburg;eastern target;60,6;56,8
-Montana;western silo;-110;47;Kazan;eastern target;49,1;55,8
-Montana;western silo;-110;47;Moscow;eastern target;37,6;55,8
-Montana;western silo;-110;47;Shanghai;eastern target;121,4;31,2
-Montana;western silo;-110;47;Zhumadian;eastern target;114;33
-Montana;western silo;-110;47;Saint Petersburg;eastern target;30,3;59,9
-Montana;western silo;-110;47;Minsk;eastern target;27,6;53,9
-Montana;western silo;-110;47;Bagdad;eastern target;44,4;33,3
+Philippines Sea;western submarine;132;20;Omsk;eastern target;73,3;55
+Philippines Sea;western submarine;132;20;Shenzen;eastern target;114;22,5
+Philippines Sea;western submarine;132;20;Tianjin;eastern target;117,2;39,1
 Plateau d'Albion;western silo;5;44;Kabul;eastern target;69,2;34,5
 Plateau d'Albion;western silo;5;44;Moscow;eastern target;37,6;55,8
 Scotland;western silo;-3;57;Saint Petersburg;eastern target;30,3;59,9
 Scotland;western silo;-3;57;Teheran;eastern target;51,4;35,7
-Scotland;western silo;-3;57;Vladivostok;eastern target;11,9;43,1
-Barents Sea;western submarine;40;74;Crimea;eastern target;34,2;45,4
-Barents Sea;western submarine;40;74;Novgorod;eastern target;31,3;58,5
-Barents Sea;western submarine;40;74;Samara;eastern target;50,2;53,2
-Philippines Sea;western submarine;132;20;Shenzen;eastern target;114;22,5
-Philippines Sea;western submarine;132;20;Omsk;eastern target;73,3;55
-Philippines Sea;western submarine;132;20;Tianjin;eastern target;117,2;39,1
+Scotland;western silo;-3;57;Vladivostok;eastern target;131,9;43,1
+Svobodny;eastern silo;128;51;Chicago;western target;-87,7;41,9
+Svobodny;eastern silo;128;51;Denver;western target;-105;39,7
+Svobodny;eastern silo;128;51;Miami;western target;-80,2;26,1
+Svobodny;eastern silo;128;51;Paris;western target;2,3;48,7
+Svobodny;eastern silo;128;51;Phoenix;western target;-112,2;33,6
+Svobodny;eastern silo;128;51;Seattle;western target;-122,3;47,6
+Svobodny;eastern silo;128;51;Sydney;western target;151,2;-33,9
+Svobodny;eastern silo;128;51;Tokyo;western target;139,9;35,6
+Taibe;western silo;35;33;Damascus;eastern target;36,3;33,5
+Yumen;eastern silo;96;40;Buenos Aires;western target;-58,5;-34,6
+Yumen;eastern silo;96;40;Chicago;western target;-87,7;41,9
+Yumen;eastern silo;96;40;New York;western target;-74;40,8
+Yumen;eastern silo;96;40;Paris;western target;2,3;48,7
+Yumen;eastern silo;96;40;Sao Paulo;western target;-46,6;-23,5
+Yumen;eastern silo;96;40;Taiwan;western target;120,7;23,9
+Yumen;eastern silo;96;40;Tokyo;western target;139,9;35,6
