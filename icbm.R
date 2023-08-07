@@ -132,14 +132,14 @@ xyz2theta = function(x, y, z) {asin(y/(x*x+y*y+z*z)^0.5)}
 
 
 # These functions expect a dataframe with 3 columns (x,y,z)
-translate = function(df, dx=0, dy=0, dz=0) {  # translation
+translateXYZ = function(df, dx=0, dy=0, dz=0) {  # translation
     df[,1]=df[,1]+dx
     df[,2]=df[,2]+dy
     df[,3]=df[,3]+dz
     return(df)
 }
 
-scale = function(df, sx=1, sy=1, sz=1) {  # scale
+scaleXYZ = function(df, sx=1, sy=1, sz=1) {  # scale
     df[,1]=df[,1]*sx
     df[,2]=df[,2]*sy
     df[,3]=df[,3]*sz
@@ -213,7 +213,6 @@ distmax=(dz^2 - Rearth^2)^0.5  # max distance to visible points
 
 
 # ANIMATION PARAMETERS
-NFRAMES=360*2  # number of frames
 DIMX=1920  # Full HD animation
 DIMY=1080  # 1920 x 1080 pixels
 NCOLDIV2=round(DIMX/2)
@@ -252,22 +251,210 @@ DT$z=polar2z(Rearth, DT$phi, DT$theta)
 DT=DT[, list(x, y, z)]  # clean dataframe with 3 columns (x,y,z)
 
 
+# 1/6: Nations argue...
+background=LoadBitmap("background1.png")  # "Nations argue..."
+NFRAMES=367
+Offset=0
+NTURNS=1
 
-# 4/5: War breaks out...
+for (frame in 0:(NFRAMES-1)) {
+    theta=2*pi*frame/NFRAMES*NTURNS
+    scale=frame/NFRAMES  # global scaling
+    
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot=rotateY(DTplot, theta=-theta)
+    DTplot=scaleXYZ(DTplot, sx=scale, sy=scale, sz=scale)
+    DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
+    # Distance from each map point to observation point (0,0,0)
+    DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
+    DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
+    
+    # Empty bitmap
+    img=background*(1-frame/(NFRAMES-1))  # img=NewBitmap(DIMX, DIMY)
+    
+    # Hidden parts "algorithm":
+    #  2. Draw Earth (solid globe)
+    #  3. Draw visible maps
+    
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS*scale,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+    
+    # 3. Draw visible maps
+    DTplot$factor=f/DTplot$z
+    DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
+    DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
+    
+    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
+                 nrow(DTplot), " points"))
+    
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+    ))
+}
+
+
+
+# 2/6: Blaming each other...
+background=LoadBitmap("background2.png")  # "Blaming each other..."
+NFRAMES=350
+Offset=367
+NTURNS=1
+
+for (frame in 0:(NFRAMES-1)) {
+    theta=2*pi*frame/NFRAMES*NTURNS
+    
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot=rotateY(DTplot, theta=-theta)
+    DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
+    # Distance from each map point to observation point (0,0,0)
+    DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
+    DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
+    
+    # Empty bitmap
+    img=background*(1-frame/(NFRAMES-1))  # img=NewBitmap(DIMX, DIMY)
+    
+    # Hidden parts "algorithm":
+    #  2. Draw Earth (solid globe)
+    #  3. Draw visible maps
+    
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+    
+    # 3. Draw visible maps
+    DTplot$factor=f/DTplot$z
+    DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
+    DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
+    
+    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
+                 nrow(DTplot), " points"))
+    
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+    ))
+}
+
+
+
+# 3/6: And inevitably...
+background=LoadBitmap("background3.png")  # "And inevitably..."
+NFRAMES=296
+Offset=717
+NTURNS=1
+
+for (frame in 0:(NFRAMES-1)) {
+    theta=2*pi*frame/NFRAMES*NTURNS
+    
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot=rotateY(DTplot, theta=-theta)
+    DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
+    # Distance from each map point to observation point (0,0,0)
+    DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
+    DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
+    
+    # Empty bitmap
+    img=background*(1-frame/(NFRAMES-1))  # img=NewBitmap(DIMX, DIMY)
+    
+    # Hidden parts "algorithm":
+    #  2. Draw Earth (solid globe)
+    #  3. Draw visible maps
+
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+    
+    # 3. Draw visible maps
+    DTplot$factor=f/DTplot$z
+    DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
+    DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
+
+    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
+                 nrow(DTplot), " points"))
+    
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+    ))
+}
+
+
+
+# 4/6: STOP
+NFRAMES=73
+Offset=1013
+NTURNS=0
+
+# Rotation and re allocation of maps
+DTplot=DT  # initial position of map points
+DTplot$z = DTplot$z + dz  # Earth along Z axis
+
+# Distance from each map point to observation point (0,0,0)
+DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
+DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
+
+# Empty bitmap
+img=NewBitmap(DIMX, DIMY)
+
+# 2. Draw Earth (solid globe)
+img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
+                   valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+
+# 3. Draw visible maps
+DTplot$factor=f/DTplot$z
+DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
+DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
+
+for (frame in 0:(NFRAMES-1)) {
+    theta=2*pi*frame/NFRAMES*NTURNS
+
+    print(paste0("Part 4/6: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
+                 nrow(DTplot), " points"))
+    
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+    ))
+}
+
+
+
+# 5/6: War breaks out...
 TILT=pi/2  # X tilt for better rendering of North hemisphere
-background=LoadBitmap("background4.png")
+background=LoadBitmap("background5.png")  # "War breaks out..."
 NFRAMES=1914
 Offset=1086
 NTURNS=6
 
-
 # READ ICBM DATA AND PRECALCULATE ALL TRAJECTORIES
 icbm=data.table(read.csv2("icbm.csv"))
 
+# l=Launch
 icbm$rl=Rearth
 icbm$phil=icbm$long_launch*pi/180  # longitude (E/W) in rad
 icbm$thetal=icbm$lat_launch*pi/180  # latitude (N/S) in rad
 
+# t=Target
 icbm$rt=Rearth
 icbm$phit=icbm$long_target*pi/180  # longitude (E/W) in rad
 icbm$thetat=icbm$lat_target*pi/180  # latitude (N/S) in rad
@@ -377,7 +564,7 @@ for (frame in 0:(NFRAMES-1)) {
         if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    print(paste0("Part 4/5: ", frame, "/", NFRAMES,
+    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -390,63 +577,99 @@ for (frame in 0:(NFRAMES-1)) {
 
 
 
+# 6/6: FADE OUT
+TILT=pi/2  # X tilt for better rendering of North hemisphere
+NFRAMES=339
+Offset=3000
+NTURNS=1
 
-
-
-# 3/4: DRAW MISSILE LOCATIONS
 for (frame in 0:(NFRAMES-1)) {
-    theta=2*pi*frame/NFRAMES
+    theta=2*pi*frame/NFRAMES*NTURNS
+    scale=1-frame/(NFRAMES-1)  # global scaling
     
-    # Rotation and location
-    DTplot=rotateY(DT, theta=-theta)
-    DTplot=rotateX(DTplot, theta=-theta)
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot=rotateY(DTplot, theta=-theta)
+    DTplot=rotateX(DTplot, theta=-TILT)  # keep pi/2 tilted
+    DTplot=scaleXYZ(DTplot, sx=scale, sy=scale, sz=scale)
     DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
     # Distance from each map point to observation point (0,0,0)
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
     DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
     
-    # Rotation and location
-    locplot=rotateY(loc, theta=-theta)
-    locplot=rotateX(locplot, theta=-theta)
-    locplot$z = locplot$z + dz  # Earth along Z axis
-    # Distance from each map point to observation point (0,0,0)
-    locplot$dist=(locplot$x^2+locplot$y^2+locplot$z^2)^0.5
-    locplot=locplot[locplot$dist<=distmax]  # keep only visible locations   
+    trajplot=list()  # keep only points to be plotted in the frame
+    for (i in 1:NTRAJ) {
+        # Rotation and re allocation of trajectories
+        # lastpoint=min(frame+1, Npoints[i])  # lastpoint points to plot
+        lastpoint=Npoints[i]  # now all nukes finished
+        trajplot[[i]]=traj[[i]][1:lastpoint,] # initial position of trajectory points
+        trajplot[[i]]=rotateY(trajplot[[i]], theta=-theta)
+        trajplot[[i]]=rotateX(trajplot[[i]], theta=-TILT)  # keep pi/2 tilted
+        trajplot[[i]]=scaleXYZ(trajplot[[i]], sx=scale, sy=scale, sz=scale)       
+        trajplot[[i]]$z = trajplot[[i]]$z + dz  # Earth along Z axis
+        
+        # Distance from each trajectory point to observation point (0,0,0)
+        trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
+        
+        # Grayscale trajetories and identify nukes
+        trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
+        trajplot[[i]]$boom=0  # don't plot nukes
+        # if (lastpoint==Npoints[i]) trajplot[[i]]$boom[Npoints[i]]=1  # nuke
+    }
     
+    # Empty bitmap
     img=NewBitmap(DIMX, DIMY)
     
-    # Draw globe
-    img=DrawCircle(img, NCOLDIV2, NROWDIV2, RADIUS, fill=TRUE, val=0.15)
+    # Hidden parts "algorithm":
+    #  1. Draw trajectories more distant than Earth
+    #  2. Draw Earth (solid globe)
+    #  3. Draw visible maps
+    #  4. Draw trajectories closer than Earth
     
-    # Draw maps
+    # 1. Draw trajectories more distant than Earth
+    for (i in 1:NTRAJ) {
+        trajplottmp=trajplot[[i]][trajplot[[i]]$dist>distmax]  # distant points
+        if (nrow(trajplottmp)>0) img=PlotTraj()
+    }
+    
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS*scale,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+    
+    # 3. Draw visible maps
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
-    img[round(cbind(DTplot$xp, DTplot$yp))]=0.5  # "draw" points
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
-    # Draw locations
-    locplot$factor=f/locplot$z
-    locplot$xp=locplot$x*locplot$factor + NCOLDIV2  # 3D to 2D projection
-    locplot$yp=locplot$y*locplot$factor + NROWDIV2
-    for (i in 1:nrow(locplot)) {
-        img=DrawCircle(img, round(locplot$xp[i]), round(locplot$yp[i]),
-                       r=LOCRADIUS, inc=FALSE, val=1, fill=TRUE)        
+    # 4. Draw trajectories closer than Earth
+    for (i in 1:NTRAJ) {
+        trajplottmp=trajplot[[i]][trajplot[[i]]$dist<=distmax]  # close points
+        if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    print(paste0(frame, "/", NFRAMES, ", theta=", round(theta*180/pi), "º, ",
+    print(paste0("Part 6/6: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
-    SaveBitmap(img, paste0("img", ifelse(frame<10, "00", ifelse(frame<100, "0", "")), frame))
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+    ))
 }
 
 
+# Building MP4:
+# ffmpeg -framerate 30 -i img%4d.png -i AndOnePlayingDead.wav
+#        -c:v libx264 -crf 18 -pix_fmt yuv420p oppenheimer.mp4
 
 
 
+################################################################################
 
-
-
-# ICBM TEST (Intercontinental ballistic missile) trajectory
+# ICBM TRAJECTORY APPROXIMATION
 
 DIMX=1920  # Full HD: 1920 x 1080 pixels
 DIMY=1080
@@ -458,7 +681,7 @@ img=DrawCircle(img, x0, y0, r=R, val=0.5, fill=TRUE)
 img=DrawLine(img, x0, 1, x0, DIMY, val=0.5)
 img=DrawLine(img, 1, y0, DIMX, y0, val=0.5)
 
-HMISSILE=200
+HMISSILE=100
 FACTOR=1  # 1.5
 N=200
 for (dtheta in seq(from=pi/4/3, to=pi, length.out=12)) {
@@ -472,4 +695,4 @@ for (dtheta in seq(from=pi/4/3, to=pi, length.out=12)) {
 }
 
 ShowBitmap(img)
-SaveBitmap(img, "missiles.png")
+SaveBitmap(img, "icbmtrajectory.png")
