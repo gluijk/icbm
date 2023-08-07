@@ -351,7 +351,7 @@ for (frame in 0:(NFRAMES-1)) {
 
 # 3/6: And inevitably...
 background=LoadBitmap("background3.png")  # "And inevitably..."
-NFRAMES=296
+NFRAMES=284
 Offset=717
 NTURNS=1
 
@@ -398,8 +398,8 @@ for (frame in 0:(NFRAMES-1)) {
 
 
 # 4/6: STOP
-NFRAMES=73
-Offset=1013
+NFRAMES=85
+Offset=1001
 NTURNS=0
 
 # Rotation and re allocation of maps
@@ -527,7 +527,7 @@ for (frame in 0:(NFRAMES-1)) {
         # Distance from each trajectory point to observation point (0,0,0)
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
         
-        # Grayscale trajetories and identify nukes
+        # Grayscale trajectories and identify nukes
         trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
         trajplot[[i]]$boom=0
         if (lastpoint==Npoints[i]) trajplot[[i]]$boom[Npoints[i]]=1  # nuke
@@ -612,7 +612,7 @@ for (frame in 0:(NFRAMES-1)) {
         # Distance from each trajectory point to observation point (0,0,0)
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
         
-        # Grayscale trajetories and identify nukes
+        # Grayscale trajectories and identify nukes
         trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
         trajplot[[i]]$boom=0  # don't plot nukes
         # if (lastpoint==Npoints[i]) trajplot[[i]]$boom[Npoints[i]]=1  # nuke
