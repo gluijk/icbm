@@ -40,6 +40,14 @@ DrawCircle = function(img, x0, y0, r, inc=TRUE, val=1, fill=FALSE, thick=1) {
     return(img)
 }
 
+DrawGradCircle = function(img, x0, y0, r, valmin=0, valmax=1, gamma=3.3) {
+    indices=which( ((row(img)-x0)/r)^2 + ((col(img)-y0)/r)^2 < 1 )
+    imgtmp=(valmax-valmin) * ((r-((row(img)-x0)^2 + (col(img)-y0)^2)^0.5)/r)^(1/gamma)
+    img[indices]=imgtmp[indices]+valmin
+
+    return(img)
+}
+
 # Por Carlos Gil Bellosta
 indices.drawline = function(x0, y0, x1, y1) {
     x0=round(x0)
@@ -166,6 +174,25 @@ rotateZ = function(df, theta=0) {  # rotation around Z axis
 }
 
 
+PlotTraj = function() {  # lazy function using global variables
+    trajplottmp$factor=f/trajplottmp$z
+    trajplottmp$xp=round(trajplottmp$x*trajplottmp$factor + NCOLDIV2)
+    trajplottmp$yp=round(trajplottmp$y*trajplottmp$factor + NROWDIV2)
+    trajplottmp=trajplottmp[trajplottmp$xp>=1 & trajplottmp$xp<=DIMX &
+                            trajplottmp$yp>=1 & trajplottmp$yp<=DIMY]
+    # (xp, yp) is a 3D to 2D projection rounded and clipped
+    ifboom=trajplottmp[trajplottmp$boom==1]
+    if (nrow(ifboom)==1) {  # nuke to be plotted
+        scale=max(3-abs(frame-Npoints[i]-1), 1)  # scale? 1-2-3-2-1-1-1-1...
+        img=DrawCircle(img, ifboom$xp, ifboom$yp, RADIUSNUKE*scale,
+                       inc=FALSE, fill=TRUE, val=GRAYNUKE)
+    }
+    img[cbind(trajplottmp$xp, trajplottmp$yp)]=GRAYICBM*trajplottmp$grayscale
+    
+    return (img)
+}
+
+
 ################################################################################
 
 # Clear all warnings()
@@ -187,15 +214,16 @@ distmax=(dz^2 - Rearth^2)^0.5  # max distance to visible points
 
 # ANIMATION PARAMETERS
 NFRAMES=360*2  # number of frames
-DIMX=1920  # Full HD animation: 1920 x 1080 pixels
-DIMY=1080
+DIMX=1920  # Full HD animation
+DIMY=1080  # 1920 x 1080 pixels
 NCOLDIV2=round(DIMX/2)
 NROWDIV2=round(DIMY/2)
 TH=0.7  # border between Earth globe and image limits
 RADIUS=min(NCOLDIV2, NROWDIV2)*TH
 MAXH=3000  # max ICBM altitude from longest distance ICBM (km)
 RADIUSNUKE=4  # boom circle mark
-GRAYGLOBE=0.3
+GRAYGLOBEMAX=0.35
+GRAYGLOBEMIN=0.05
 GRAYMAP=0.6
 GRAYICBM=1
 GRAYNUKE=1
@@ -224,7 +252,16 @@ DT$z=polar2z(Rearth, DT$phi, DT$theta)
 DT=DT[, list(x, y, z)]  # clean dataframe with 3 columns (x,y,z)
 
 
-# READ ICBM DATA AND PRECALCULATION OF ALL TRAJECTORIES
+
+# 4/5: War breaks out...
+TILT=pi/2  # X tilt for better rendering of North hemisphere
+background=LoadBitmap("background4.png")
+NFRAMES=1914
+Offset=1086
+NTURNS=6
+
+
+# READ ICBM DATA AND PRECALCULATE ALL TRAJECTORIES
 icbm=data.table(read.csv2("icbm.csv"))
 
 icbm$rl=Rearth
@@ -278,64 +315,57 @@ for (i in 1:NTRAJ) {
     colnames(traj[[i]])=c('x','y','z')
 }
 
-
-
-# 4/5: War breaks out...
-background=LoadBitmap("background4.png")
 for (frame in 0:(NFRAMES-1)) {
-    theta=2*pi*frame/NFRAMES*2
+    theta=2*pi*frame/NFRAMES*NTURNS
     
-    # Rotation and re allocation
-    DTplot=rotateY(DT, theta=-theta)
-    DTplot=rotateX(DTplot, theta=-pi/6)
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot=rotateY(DTplot, theta=-theta)
+    DTplot=rotateX(DTplot, theta=-TILT*frame/(NFRAMES-1))
     DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
     # Distance from each map point to observation point (0,0,0)
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
     DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
     
     trajplot=list()  # keep only points to be plotted in the frame
     for (i in 1:NTRAJ) {
+        # Rotation and re allocation of trajectories
         lastpoint=min(frame+1, Npoints[i])  # lastpoint points to plot
-        trajplot[[i]]=rotateY(traj[[i]][1:lastpoint,], theta=-theta)
-        trajplot[[i]]=rotateX(trajplot[[i]], theta=-pi/6)
+        trajplot[[i]]=traj[[i]][1:lastpoint,] # initial position of trajectory points
+        trajplot[[i]]=rotateY(trajplot[[i]], theta=-theta)
+        trajplot[[i]]=rotateX(trajplot[[i]], theta=-TILT*frame/(NFRAMES-1))
         trajplot[[i]]$z = trajplot[[i]]$z + dz  # Earth along Z axis
+        
         # Distance from each trajectory point to observation point (0,0,0)
         trajplot[[i]]$dist=(trajplot[[i]]$x^2+trajplot[[i]]$y^2+trajplot[[i]]$z^2)^0.5
+        
+        # Grayscale trajetories and identify nukes
         trajplot[[i]]$grayscale=row(trajplot[[i]][,1])/lastpoint  # range 0..1
         trajplot[[i]]$boom=0
         if (lastpoint==Npoints[i]) trajplot[[i]]$boom[Npoints[i]]=1  # nuke
     }
     
-    # img=NewBitmap(DIMX, DIMY)
-    img=background*(1-frame/(NFRAMES-1))
+    # Empty bitmap
+    img=background*(1-frame/(NFRAMES-1))  # img=NewBitmap(DIMX, DIMY)
     
     # Hidden parts "algorithm":
     #  1. Draw trajectories more distant than Earth
-    #  2. Draw solid globe
-    #  3. Draw only visible maps
+    #  2. Draw Earth (solid globe)
+    #  3. Draw visible maps
     #  4. Draw trajectories closer than Earth
     
     # 1. Draw trajectories more distant than Earth
     for (i in 1:NTRAJ) {
         trajplottmp=trajplot[[i]][trajplot[[i]]$dist>distmax]  # distant points
-        trajplottmp$factor=f/trajplottmp$z
-        trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
-        trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
-        ifboom=trajplottmp[trajplottmp$boom==1]
-        if (nrow(ifboom)==1) {  # nuke has to be plotted, size?
-            if (frame+1>=Npoints[i] & frame+1<=Npoints[i]+2) scale=3 else scale=1
-            img=DrawCircle(img, round(ifboom$xp), round(ifboom$yp),
-                RADIUSNUKE*scale, inc=FALSE, fill=TRUE, val=GRAYNUKE)
-        }
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
-            GRAYICBM*trajplottmp$grayscale
+        if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    # 2. Draw Earth
-    img=DrawCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
-                   inc=FALSE, fill=TRUE, val=GRAYGLOBE)
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
 
-    # 3. Draw only visible maps
+    # 3. Draw visible maps
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
@@ -344,24 +374,20 @@ for (frame in 0:(NFRAMES-1)) {
     # 4. Draw trajectories closer than Earth
     for (i in 1:NTRAJ) {
         trajplottmp=trajplot[[i]][trajplot[[i]]$dist<=distmax]  # close points
-        trajplottmp$factor=f/trajplottmp$z
-        trajplottmp$xp=trajplottmp$x*trajplottmp$factor + NCOLDIV2  # 3D to 2D projection
-        trajplottmp$yp=trajplottmp$y*trajplottmp$factor + NROWDIV2
-        ifboom=trajplottmp[trajplottmp$boom==1]
-        if (nrow(ifboom)==1) {  # nuke has to be plotted, size?
-            if (frame+1>=Npoints[i] & frame+1<=Npoints[i]+2) scale=3 else scale=1
-            img=DrawCircle(img, round(ifboom$xp), round(ifboom$yp),
-                RADIUSNUKE*scale, inc=FALSE, fill=TRUE, val=GRAYNUKE)
-        }
-        img[round(cbind(trajplottmp$xp, trajplottmp$yp))]=  # draw points
-            GRAYICBM*trajplottmp$grayscale
+        if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    print(paste0(frame, "/", NFRAMES, ", theta=", round(theta*180/pi), "º, ",
+    print(paste0("Part 4/5: ", frame, "/", NFRAMES,
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
-    SaveBitmap(img, paste0("img", ifelse(frame<10, "00", ifelse(frame<100, "0", "")), frame))
+    SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
+                                  ifelse(frame+Offset<100, "00",
+                                  ifelse(frame+Offset<1000, "0", ""))),
+                                  frame+Offset
+                          ))
 }
+
 
 
 
@@ -412,6 +438,10 @@ for (frame in 0:(NFRAMES-1)) {
     
     SaveBitmap(img, paste0("img", ifelse(frame<10, "00", ifelse(frame<100, "0", "")), frame))
 }
+
+
+
+
 
 
 
