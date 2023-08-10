@@ -16,14 +16,14 @@ NewBitmap = function(dimx, dimy, val=0) {
 
 DrawEllip = function(img, x0, y0, a, b, inc=TRUE, val=1, fill=FALSE, thick=1) {
     # Dibuja elipse de centro (x0,y0) y radios a y b
-    # Por defecto mÃ©todo no destructivo, con valor=1 y sin relleno
+    # Por defecto método no destructivo, con valor=1 y sin relleno
     # Puede elegirse el grosor si no se rellena
-    # AquÃ­ no redondeamos para tener mÃ¡s precisiÃ³n en la divisiÃ³n
+    # Aquí no redondeamos para tener más precisión en la división
     if (fill) {
         indices=which( ((row(img)-x0)/a)^2 + ((col(img)-y0)/b)^2 < 1 )
     } else {
         indices=which( ((row(img)-x0)/(a+thick/2))^2 + ((col(img)-y0)/(b+thick/2))^2 <  1 &
-                           ((row(img)-x0)/(a-thick/2))^2 + ((col(img)-y0)/(b-thick/2))^2 >= 1 )
+                       ((row(img)-x0)/(a-thick/2))^2 + ((col(img)-y0)/(b-thick/2))^2 >= 1 )
     }
     if (inc) img[indices]=img[indices]+val
     else img[indices]=val
@@ -32,8 +32,8 @@ DrawEllip = function(img, x0, y0, a, b, inc=TRUE, val=1, fill=FALSE, thick=1) {
 }
 
 DrawCircle = function(img, x0, y0, r, inc=TRUE, val=1, fill=FALSE, thick=1) {
-    # Dibuja cÃ­rculo de centro (x0,y0) y radio r
-    # Por defecto mÃ©todo no destructivo, con valor=1 y sin relleno
+    # Dibuja círculo de centro (x0,y0) y radio r
+    # Por defecto método no destructivo, con valor=1 y sin relleno
     # Puede elegirse el grosor si no se rellena
     img=DrawEllip(img, x0, y0, r, r, inc, val, fill, thick)
     
@@ -65,7 +65,7 @@ indices.drawline = function(x0, y0, x1, y1) {
 
 DrawLine = function(img, x0, y0, x1, y1, inc=TRUE, val=1) {
     # Dibuja recta desde (x0,y0)-(x1,y1)
-    # Por defecto mÃ©todo no destructivo y con valor=1
+    # Por defecto método no destructivo y con valor=1
     indices=indices.drawline(x0, y0, x1, y1)
     if (inc) img[indices]=img[indices]+val
     else img[indices]=val
@@ -75,7 +75,7 @@ DrawLine = function(img, x0, y0, x1, y1, inc=TRUE, val=1) {
 
 DrawPoint = function(img, x0, y0, inc=TRUE, val=1) {
     # Dibuja punto en (x0,y0)
-    # Por defecto mÃ©todo no destructivo y con valor=1
+    # Por defecto método no destructivo y con valor=1
     img=DrawLine(img, x0, y0, x0, y0, inc, val)
     
     return(img)
@@ -232,8 +232,8 @@ f=min(NCOLDIV2,NROWDIV2)*TH*
     (dz-Rearth*cos(thetamax))/(Rearth*sin(thetamax))
 FOV=(pi-2*thetamax)*180/pi  # FOV in deg
 # https://www.scantips.com/lights/fieldofview.html
-# ISS FOV:  140Âº diagonal -> 7.87mm FF
-# Moon FOV: 1.9Âº diagonal -> 1300mm FF
+# ISS FOV:  140º diagonal -> 7.87mm FF
+# Moon FOV: 1.9º diagonal -> 1300mm FF
 
 
 # READ WORLD COORDINATES
@@ -289,7 +289,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -337,7 +337,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -385,7 +385,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
 
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -427,7 +427,7 @@ for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*NTURNS
 
     print(paste0("Part 4/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -449,12 +449,11 @@ NTURNS=6
 # READ ICBM DATA AND PRECALCULATE ALL TRAJECTORIES
 icbm=data.table(read.csv2("icbm.csv"))
 
-# l=Launch
+# l=Launch, t=Target
 icbm$rl=Rearth
 icbm$phil=icbm$long_launch*pi/180  # longitude (E/W) in rad
 icbm$thetal=icbm$lat_launch*pi/180  # latitude (N/S) in rad
 
-# t=Target
 icbm$rt=Rearth
 icbm$phit=icbm$long_target*pi/180  # longitude (E/W) in rad
 icbm$thetat=icbm$lat_target*pi/180  # latitude (N/S) in rad
@@ -467,10 +466,10 @@ icbm$xt=polar2x(icbm$rt, icbm$phit, icbm$thetat)
 icbm$yt=polar2y(icbm$rt, icbm$phit, icbm$thetat)
 icbm$zt=polar2z(icbm$rt, icbm$phit, icbm$thetat)
 
-# Calculation of angle arc between Launch and Target using dot product
-# (radius of all ground locations = Rearth)
+# Calculation of arc between Launch and Target using dot product
+# (radius of l,t ground locations = Rearth)
 icbm$dalpha=acos((icbm$xl*icbm$xt+icbm$yl*icbm$yt+icbm$zl*icbm$zt) / Rearth^2)
-maxarc=max(icbm$dalpha)
+maxarc=max(icbm$dalpha)  # longest range missile
 icbm$Ni=round(icbm$dalpha/maxarc*NFRAMES)
 icbm$Hi=icbm$dalpha/maxarc*MAXH  # same launch angle condition for all ICBM's
 
@@ -565,7 +564,7 @@ for (frame in 0:(NFRAMES-1)) {
     }
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -650,7 +649,7 @@ for (frame in 0:(NFRAMES-1)) {
     }
     
     print(paste0("Part 6/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "Âº, ",
+                 ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
