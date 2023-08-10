@@ -1,6 +1,6 @@
 # ICBM (Intercontinental Ballistic Missile) trajectory simulation
 # www.overfitting.net
-# https://www.overfitting.net/2023/04/fotografiando-la-tierra-desde-el-espacio.html
+# https://www.overfitting.net/2023/08/oppenheimer-i-am-become-death-destroyer.html
 
 
 library(ggmap)  # map_data()
@@ -16,9 +16,9 @@ NewBitmap = function(dimx, dimy, val=0) {
 
 DrawEllip = function(img, x0, y0, a, b, inc=TRUE, val=1, fill=FALSE, thick=1) {
     # Dibuja elipse de centro (x0,y0) y radios a y b
-    # Por defecto método no destructivo, con valor=1 y sin relleno
+    # Por defecto mÃ©todo no destructivo, con valor=1 y sin relleno
     # Puede elegirse el grosor si no se rellena
-    # Aquí no redondeamos para tener más precisión en la división
+    # AquÃ­ no redondeamos para tener mÃ¡s precisiÃ³n en la divisiÃ³n
     if (fill) {
         indices=which( ((row(img)-x0)/a)^2 + ((col(img)-y0)/b)^2 < 1 )
     } else {
@@ -32,8 +32,8 @@ DrawEllip = function(img, x0, y0, a, b, inc=TRUE, val=1, fill=FALSE, thick=1) {
 }
 
 DrawCircle = function(img, x0, y0, r, inc=TRUE, val=1, fill=FALSE, thick=1) {
-    # Dibuja círculo de centro (x0,y0) y radio r
-    # Por defecto método no destructivo, con valor=1 y sin relleno
+    # Dibuja cÃ­rculo de centro (x0,y0) y radio r
+    # Por defecto mÃ©todo no destructivo, con valor=1 y sin relleno
     # Puede elegirse el grosor si no se rellena
     img=DrawEllip(img, x0, y0, r, r, inc, val, fill, thick)
     
@@ -65,7 +65,7 @@ indices.drawline = function(x0, y0, x1, y1) {
 
 DrawLine = function(img, x0, y0, x1, y1, inc=TRUE, val=1) {
     # Dibuja recta desde (x0,y0)-(x1,y1)
-    # Por defecto método no destructivo y con valor=1
+    # Por defecto mÃ©todo no destructivo y con valor=1
     indices=indices.drawline(x0, y0, x1, y1)
     if (inc) img[indices]=img[indices]+val
     else img[indices]=val
@@ -75,7 +75,7 @@ DrawLine = function(img, x0, y0, x1, y1, inc=TRUE, val=1) {
 
 DrawPoint = function(img, x0, y0, inc=TRUE, val=1) {
     # Dibuja punto en (x0,y0)
-    # Por defecto método no destructivo y con valor=1
+    # Por defecto mÃ©todo no destructivo y con valor=1
     img=DrawLine(img, x0, y0, x0, y0, inc, val)
     
     return(img)
@@ -232,8 +232,8 @@ f=min(NCOLDIV2,NROWDIV2)*TH*
     (dz-Rearth*cos(thetamax))/(Rearth*sin(thetamax))
 FOV=(pi-2*thetamax)*180/pi  # FOV in deg
 # https://www.scantips.com/lights/fieldofview.html
-# ISS FOV:  140º diagonal -> 7.87mm FF
-# Moon FOV: 1.9º diagonal -> 1300mm FF
+# ISS FOV:  140Âº diagonal -> 7.87mm FF
+# Moon FOV: 1.9Âº diagonal -> 1300mm FF
 
 
 # READ WORLD COORDINATES
@@ -289,7 +289,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -337,7 +337,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -385,7 +385,7 @@ for (frame in 0:(NFRAMES-1)) {
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
 
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -427,7 +427,7 @@ for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*NTURNS
 
     print(paste0("Part 4/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -565,7 +565,7 @@ for (frame in 0:(NFRAMES-1)) {
     }
     
     print(paste0("Part 5/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
@@ -650,7 +650,7 @@ for (frame in 0:(NFRAMES-1)) {
     }
     
     print(paste0("Part 6/6: ", frame, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "º, ",
+                 ", theta=", round(theta*180/pi), "Âº, ",
                  nrow(DTplot), " points"))
     
     SaveBitmap(img, paste0("img", ifelse(frame+Offset<10, "000",
