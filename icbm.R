@@ -288,7 +288,7 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
-    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 1/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -303,7 +303,7 @@ for (frame in 0:(NFRAMES-1)) {
 
 # 2/6: Blaming each other...
 background=LoadBitmap("background2.png")  # "Blaming each other..."
-NFRAMES=350
+NFRAMES=362
 Offset=367
 NTURNS=1
 
@@ -336,7 +336,7 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
     
-    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 2/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -349,10 +349,10 @@ for (frame in 0:(NFRAMES-1)) {
 
 
 
-# 3/6: And inevitably...
-background=LoadBitmap("background3.png")  # "And inevitably..."
-NFRAMES=284
-Offset=717
+# 3/6: Start to lose control...
+background=LoadBitmap("background3.png")  # "Start to lose control..."
+NFRAMES=272
+Offset=729
 NTURNS=1
 
 for (frame in 0:(NFRAMES-1)) {
@@ -384,7 +384,7 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
     img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
 
-    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 3/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -397,36 +397,37 @@ for (frame in 0:(NFRAMES-1)) {
 
 
 
-# 4/6: STOP
+# 4/6: And inevitably...
+background=LoadBitmap("background4.png")  # "And inevitably..."
 NFRAMES=85
 Offset=1001
 NTURNS=0
 
-# Rotation and re allocation of maps
-DTplot=DT  # initial position of map points
-DTplot$z = DTplot$z + dz  # Earth along Z axis
-
-# Distance from each map point to observation point (0,0,0)
-DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
-DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
-
-# Empty bitmap
-img=NewBitmap(DIMX, DIMY)
-
-# 2. Draw Earth (solid globe)
-img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
-                   valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
-
-# 3. Draw visible maps
-DTplot$factor=f/DTplot$z
-DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
-DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
-img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
-
 for (frame in 0:(NFRAMES-1)) {
     theta=2*pi*frame/NFRAMES*NTURNS
+    
+    # Rotation and re allocation of maps
+    DTplot=DT  # initial position of map points
+    DTplot$z = DTplot$z + dz  # Earth along Z axis
+    
+    # Distance from each map point to observation point (0,0,0)
+    DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
+    DTplot=DTplot[DTplot$dist<=distmax]  # keep only visible points
+    
+    # Empty bitmap
+    img=background*(1-frame/(NFRAMES-1))  # img=NewBitmap(DIMX, DIMY)
+    
+    # 2. Draw Earth (solid globe)
+    img=DrawGradCircle(img, NCOLDIV2, NROWDIV2, RADIUS,
+                       valmin=GRAYGLOBEMIN, valmax=GRAYGLOBEMAX)
+    
+    # 3. Draw visible maps
+    DTplot$factor=f/DTplot$z
+    DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
+    DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+    img[round(cbind(DTplot$xp, DTplot$yp))]=GRAYMAP  # draw points
 
-    print(paste0("Part 4/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 4/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -563,7 +564,7 @@ for (frame in 0:(NFRAMES-1)) {
         if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    print(paste0("Part 5/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 5/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
@@ -648,7 +649,7 @@ for (frame in 0:(NFRAMES-1)) {
         if (nrow(trajplottmp)>0) img=PlotTraj()
     }
     
-    print(paste0("Part 6/6: ", frame, "/", NFRAMES,
+    print(paste0("Part 6/6: ", frame+1, "/", NFRAMES,
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
     
