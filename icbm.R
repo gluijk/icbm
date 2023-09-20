@@ -303,7 +303,7 @@ for (frame in 0:(NFRAMES-1)) {
 
 # 2/6: Blaming each other...
 background=LoadBitmap("background2.png")  # "Blaming each other..."
-NFRAMES=362
+NFRAMES=356
 Offset=367
 NTURNS=1
 
@@ -351,8 +351,8 @@ for (frame in 0:(NFRAMES-1)) {
 
 # 3/6: Start to lose control...
 background=LoadBitmap("background3.png")  # "Start to lose control..."
-NFRAMES=272
-Offset=729
+NFRAMES=278
+Offset=723
 NTURNS=1
 
 for (frame in 0:(NFRAMES-1)) {
