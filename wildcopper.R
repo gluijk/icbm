@@ -41,7 +41,7 @@ rotateY = function(df, theta=0) {  # rotation around Y axis
 
 # PHYSICAL PARAMETERS
 Rearth=6371.23  # Earth average radius (km)
-dz=Rearth*4  # observation point to Earth surface distance (km)
+dz=Rearth*4  # observation point to Earth centre distance (km)
 thetamax=acos(Rearth/dz)
 
 
