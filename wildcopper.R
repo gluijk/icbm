@@ -85,8 +85,8 @@ for (frame in 0:(NFRAMES-1)) {
     # Rotation and re allocation of maps
     DTplot=DT  # initial position of map points
     DTplot=rotateY(DTplot, theta=-theta)
-    DTplot$z = DTplot$z + dz  # Earth along Z axis
-    DTplot$y = DTplot$y + Rearth/3  # Earth along Z axis
+    DTplot$z = DTplot$z + dz  # Earth Z axis (distance) shift
+    DTplot$y = DTplot$y + Rearth/3  # Earth Y axis (vertical) shift
     
     # Distance from each map point to observation point (0,0,0)
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
@@ -130,7 +130,7 @@ for (frame in 0:(NFRAMES-1)) {
     }
 
     print(paste0(frame+1, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "บ, ",
+                 ", theta=", round(theta*180/pi), "ยบ, ",
                  nrow(DTplot), " points"))
 }
 
