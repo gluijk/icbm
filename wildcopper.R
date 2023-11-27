@@ -92,18 +92,22 @@ for (frame in 0:(NFRAMES-1)) {
     DTplot=DTplot[order(-dist)]  # order points by distance to observer
     MAX=max(DTplot$dist)
     MIN=min(DTplot$dist)
-
+    
     # Empty bitmap
     img=NewBitmap(DIMX, DIMY)
-
-    # Draw globe
+    
+    # Draw globe (3x3 pixel/dot)
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
-    for (i in 1:nrow(DTplot)) img[round(DTplot$xp[i]),
-        round(DTplot$yp[i])]=(1-(DTplot$dist[i]-MIN)/(MAX-MIN))/COLOURGAP+(1-1/COLOURGAP)
-
-    # Draw shadow
+    for (i in 1:nrow(DTplot)) {
+        VAL=(1-(DTplot$dist[i]-MIN)/(MAX-MIN))/COLOURGAP+(1-1/COLOURGAP)
+        X0=round(DTplot$xp[i])
+        Y0=round(DTplot$yp[i])
+        img[(X0-1):(X0+1), (Y0-1):(Y0+1)]=VAL
+    }
+    
+    # Draw shadow (1x1 pixel/dot)
     DTplot$yp=-Rearth*1.1*DTplot$factor + NROWDIV2  # projection plane for shadows
     for (i in 1:nrow(DTplot)) img[round(DTplot$xp[i]), round(DTplot$yp[i])]=-1
     
@@ -116,20 +120,20 @@ for (frame in 0:(NFRAMES-1)) {
     imgout[,,2][indices]=0
     imgout[,,3][indices]=0
     
-    indices=which(img==-1)  # shadows
+    indices=which(img==-1)  # shadow
     imgout[,,1][indices]=0
     imgout[,,2][indices]=0
     imgout[,,3][indices]=0  
     
     for (i in 0:(NTURNS-1)) {
-    writePNG(imgout, paste0("img", ifelse(frame+i*NFRAMES<10, "000",
-        ifelse(frame+i*NFRAMES<100, "00",
-        ifelse(frame+i*NFRAMES<1000, "0", ""))),
-        frame+i*NFRAMES, ".png"))
+        writePNG(imgout, paste0("img", ifelse(frame+i*NFRAMES<10, "000",
+                                              ifelse(frame+i*NFRAMES<100, "00",
+                                                     ifelse(frame+i*NFRAMES<1000, "0", ""))),
+                                frame+i*NFRAMES, ".png"))
     }
-
+    
     print(paste0(frame+1, "/", NFRAMES,
-                 ", theta=", round(theta*180/pi), "ยบ, ",
+                 ", theta=", round(theta*180/pi), "บ, ",
                  nrow(DTplot), " points"))
 }
 
