@@ -1,4 +1,3 @@
-
 # Wild Copper demo tribute
 # www.overfitting.net
 # https://www.overfitting.net/2023/08/oppenheimer-i-am-become-death-destroyer.html
