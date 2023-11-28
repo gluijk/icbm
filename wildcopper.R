@@ -89,14 +89,14 @@ for (frame in 0:(NFRAMES-1)) {
     
     # Distance from each map point to observation point (0,0,0)
     DTplot$dist=(DTplot$x^2+DTplot$y^2+DTplot$z^2)^0.5
-    DTplot=DTplot[order(-dist)]  # order points by distance to observer
+    DTplot=DTplot[order(-dist)]  # order points by desc distance to observer
     MAX=max(DTplot$dist)
     MIN=min(DTplot$dist)
     
     # Empty bitmap
     img=NewBitmap(DIMX, DIMY)
     
-    # Draw globe (3x3 pixel/dot)
+    # Draw globe (2x2 pixel/dot)
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
@@ -104,12 +104,16 @@ for (frame in 0:(NFRAMES-1)) {
         VAL=(1-(DTplot$dist[i]-MIN)/(MAX-MIN))/COLOURGAP+(1-1/COLOURGAP)
         X0=round(DTplot$xp[i])
         Y0=round(DTplot$yp[i])
-        img[(X0-1):(X0+1), (Y0-1):(Y0+1)]=VAL
+        img[X0:(X0+1), Y0:(Y0+1)]=VAL
     }
     
-    # Draw shadow (1x1 pixel/dot)
-    DTplot$yp=-Rearth*1.1*DTplot$factor + NROWDIV2  # projection plane for shadows
-    for (i in 1:nrow(DTplot)) img[round(DTplot$xp[i]), round(DTplot$yp[i])]=-1
+    # Draw shadow (2x2 pixel/dot)
+    DTplot$yp=-Rearth*1.1*DTplot$factor + NROWDIV2  # shadow projection plane
+    for (i in 1:nrow(DTplot)) {
+        X0=round(DTplot$xp[i])
+        Y0=round(DTplot$yp[i])
+        img[X0:(X0+1), Y0:(Y0+1)]=-1
+    }
     
     # Generate colour image
     imgout=background
@@ -123,16 +127,16 @@ for (frame in 0:(NFRAMES-1)) {
     indices=which(img==-1)  # shadow
     imgout[,,1][indices]=0
     imgout[,,2][indices]=0
-    imgout[,,3][indices]=0  
+    imgout[,,3][indices]=0
     
     for (i in 0:(NTURNS-1)) {
         writePNG(imgout, paste0("img", ifelse(frame+i*NFRAMES<10, "000",
-                                              ifelse(frame+i*NFRAMES<100, "00",
-                                                     ifelse(frame+i*NFRAMES<1000, "0", ""))),
-                                frame+i*NFRAMES, ".png"))
+            ifelse(frame+i*NFRAMES<100, "00",
+            ifelse(frame+i*NFRAMES<1000, "0", ""))),
+            frame+i*NFRAMES, ".png"))
     }
     
-    print(paste0(frame+1, "/", NFRAMES,
+    print(paste0(frame+1, "/", NFRAMES, 
                  ", theta=", round(theta*180/pi), "º, ",
                  nrow(DTplot), " points"))
 }
@@ -140,5 +144,5 @@ for (frame in 0:(NFRAMES-1)) {
 
 
 # Building MP4:
-# ffmpeg -framerate 30 -i img%4d.png -i wildcopper.wav
+# ffmpeg -framerate 30 -i img%4d.png -i WildCopperDemo.wav
 #        -c:v libx264 -crf 18 -pix_fmt yuv420p wildcopper.mp4
