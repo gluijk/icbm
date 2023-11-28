@@ -96,25 +96,20 @@ for (frame in 0:(NFRAMES-1)) {
     # Empty bitmap
     img=NewBitmap(DIMX, DIMY)
     
-    # Draw globe (2x2 pixel/dot)
+    # Draw globe and shadow
     DTplot$factor=f/DTplot$z
     DTplot$xp=DTplot$x*DTplot$factor + NCOLDIV2  # 3D to 2D projection
     DTplot$yp=DTplot$y*DTplot$factor + NROWDIV2
+    DTplot$yps=-Rearth*1.1*DTplot$factor + NROWDIV2  # shadow projection plane
     for (i in 1:nrow(DTplot)) {
         VAL=(1-(DTplot$dist[i]-MIN)/(MAX-MIN))/COLOURGAP+(1-1/COLOURGAP)
         X0=round(DTplot$xp[i])
         Y0=round(DTplot$yp[i])
-        img[X0:(X0+1), Y0:(Y0+1)]=VAL
+        img[X0:(X0+1), Y0:(Y0+1)]=VAL  # globe (2x2 pixel/dot)
+        
+        img[X0, round(DTplot$yps[i])]=-1  # shadow (1x1 pixel/dot)
     }
-    
-    # Draw shadow (2x2 pixel/dot)
-    DTplot$yp=-Rearth*1.1*DTplot$factor + NROWDIV2  # shadow projection plane
-    for (i in 1:nrow(DTplot)) {
-        X0=round(DTplot$xp[i])
-        Y0=round(DTplot$yp[i])
-        img[X0:(X0+1), Y0:(Y0+1)]=-1
-    }
-    
+
     # Generate colour image
     imgout=background
     img=t(img[,ncol(img):1])
